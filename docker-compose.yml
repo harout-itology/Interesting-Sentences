@@ -1,0 +1,50 @@
+version: '3.6'
+
+services:
+    db:
+        container_name: hayrapetyan-db
+        tty: true
+        build:
+            context: .
+            dockerfile: docker/db/Dockerfile
+        environment:
+            MYSQL_DATABASE: hayrapetyan
+            MYSQL_USER: hayrapetyan
+            MYSQL_PASSWORD: fn]HH_.rW[IWhhN6
+            MYSQL_ROOT_PASSWORD: W_Y+grLPajCwu]aCrBO0MER{wOCh.5vh
+        ports:
+            - "3306:3306"
+        networks:
+            - hayrapetyan
+    app:
+        container_name: hayrapetyan-app
+        tty: true
+        build:
+            context: .
+            dockerfile: docker/app/Dockerfile
+        volumes:
+            - ./:/var/www/html/
+        ports:
+            - "9000:9000"
+        networks:
+            - hayrapetyan
+        depends_on:
+            - db
+    http:
+        container_name: hayrapetyan-http
+        tty: true
+        build:
+            context: .
+            dockerfile: docker/http/Dockerfile
+        volumes:
+            - ./:/var/www/html/
+        ports:
+            - "80:80"
+        networks:
+            - hayrapetyan
+        depends_on:
+            - app
+
+networks:
+    hayrapetyan:
+        driver: bridge
